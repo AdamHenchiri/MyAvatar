@@ -25,6 +25,15 @@ class Utilisateur
     #[ORM\Column(length: 255)]
     private ?string $photoProfil = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $login = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
+    #[ORM\Column]
+    private ?int $is_verified = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +83,42 @@ class Utilisateur
     public function setPhotoProfil(string $photoProfil): static
     {
         $this->photoProfil = $photoProfil;
+
+        return $this;
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(string $login): static
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getIsVerified(): ?int
+    {
+        return $this->is_verified;
+    }
+
+    public function setIsVerified(int $is_verified): static
+    {
+        $this->is_verified = $is_verified;
 
         return $this;
     }
