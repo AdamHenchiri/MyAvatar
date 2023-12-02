@@ -104,7 +104,7 @@ class UtilisateurController extends AbstractController
         }
 
         return $this->render('utilisateur/signup.html.twig', [
-            'controller_name' => 'UtilisateurController',
+            'controller_name' => 'UtilisateurController', 'form' => $form
         ]);
     }
 
