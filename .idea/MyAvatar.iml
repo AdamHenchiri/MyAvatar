@@ -133,6 +133,7 @@
       <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/phpunit/php-invoker" />
       <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/phpunit/php-file-iterator" />
       <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/phpunit/php-timer" />
+      <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/symfonycasts/verify-email-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -2,15 +2,27 @@
 
 namespace App\Controller;
 
+use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
 use App\Repository\UtilisateurRepository;
-use http\Env\Request;
+use App\Security\EmailVerifier;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UtilisateurController extends AbstractController
 {
+//    private EmailVerifier $emailVerifier;
+//
+//    public function __construct(EmailVerifier $emailVerifier) {
+//        $this->emailVerifier = $emailVerifier;
+//    }
+
     #[Route('/', name: 'app_home', methods: ['GET'])]
     public function index(): Response
     {
@@ -62,19 +74,33 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
-    #[Route('/signup', name: 'app_user_signup'), Method('POST')]
-    public function signup(Request $request): Response {
+    #[Route('/signup', name: 'app_user_signup', methods: ['GET', 'POST'])]
+    public function signup(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,): Response {
 
+        $user = new Utilisateur();
         $form = $this->createForm(UtilisateurType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-//            $photoProfil = $form["fichierPhotoProfil"]->getData();
-//            $utilisateurManager->processNewUtilisateur($utilisateur, $photoProfil);
-//            $em->flush();
-//            $this->addFlash('success', 'Votre profil a été modifié avec succès.');
-//            return $this->redirectToRoute('app_user_profile', ['id' => $utilisateur->getId()]);
+            // generate a signed url and email it to the user
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('no-reply@festiflux.com', 'No Reply'))
+                    ->to($user->getEmail())
+                    ->subject('Please Confirm your Email')
+                    ->htmlTemplate('registration/confirmation_email.html.twig')
+            );
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('utilisateur/signup.html.twig', [
@@ -82,7 +108,7 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
-    #[Route('/login', name: 'app_user_signin'), Method('GET','POST')]
+    #[Route('/login', name: 'app_user_signin', methods: ['GET', 'POST'])]
     public function signin(): Response {
 
         return $this->render('utilisateur/signin.html.twig', [
