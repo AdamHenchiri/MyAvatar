@@ -7,9 +7,15 @@ use Doctrine\DBAL\Types\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class UtilisateurType extends AbstractType
 {
@@ -43,7 +49,37 @@ class UtilisateurType extends AbstractType
                     'extensionsMessage' => 'PNG, JPG ou JPEG',
                 ]
             ])
-        ;
+            ->add('password', RepeatedType::class, [
+                'mapped' => false,
+                'required' => true,
+                'type' => PasswordType::class,
+                'invalid_message' => 'The password fields must match.',
+                'first_options'  => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Confirmation mot de passe'],
+                'constraints' => [
+                    new NotBlank(),
+                    new NotNull(),
+                    new Regex('#^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$#', message: 'Your password must contain at least one capital letter, a small letter and one number'),
+                    new Length([
+                        'min' => 8,
+                        'max' => 20,
+                        'minMessage' => 'Mot de passe trop court (>8)',
+                        'maxMessage' => 'Mot de passe trop long (<20)'
+                    ])
+                ],'attr'=>[
+                    'minlength' => 8,
+                    'maxlength' => 20,
+                    'pattern' => '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,20}$',
+                ]
+            ])
+            ->add('login', TextType::class, [
+                'attr' => [
+                    'minlength' => 4,
+                    'maxlength' => 20,
+                    'minMessage' => 'Minimum 4 caractères',
+                    'maxMessage' => 'Maximum 20 caractères',
+                ]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
