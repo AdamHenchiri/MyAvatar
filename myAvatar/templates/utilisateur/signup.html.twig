@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MyAvatar - Sign Up{% endblock %}
+
+{% block body %}
+    <div>
+    <h1>Sign Up</h1>
+    {{ form_label(form.nom, "Nom :") }}
+    {{ form_widget(form.nom) }}
+
+    {{ form_label(form.prenom, "Prenom :") }}
+    {{ form_widget(form.prenom) }}
+
+    {{ form_label(form.login, "Login :") }}
+    {{ form_widget(form.login) }}
+
+    {{ form_label(form.email, "Email :") }}
+    {{ form_widget(form.email) }}
+
+    {{ form_label(form.photoProfil, "Photo de profil :") }}
+    {{ form_widget(form.photoProfil) }}
+
+    {{ form_label(form.password.first, "Mot de passe :") }}
+    {{ form_widget(form.password.first) }}
+
+    {{ form_label(form.password.second, "Confirmer le mot de passe :") }}
+    {{ form_widget(form.password.second) }}
+
+    {{ form_widget(form.submit) }}
+    </div>
+{% endblock %}
