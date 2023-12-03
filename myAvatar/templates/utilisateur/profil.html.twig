@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{utilisateur.nom}} {{ utilisateur.prenom}}
+{% endblock %}
+
+{% block body %}
+
+    <div class="profil-box">
+          <h1>  Hello {{ utilisateur.nom }} voici votre profil
+          </h1>
+        <div class="info-box-wrapper">
+            <div class="info-box">
+            {% if utilisateur.photoProfil == true %}
+                <img src="data:image/jpeg;base64,{{ pp }}" alt="image de profil">
+            {% else %}
+                    <img src="{{ asset("uploads/user/anonyme.png") }}" alt="image de profil"/>
+            {% endif %}
+                </div>
+                <div class="info-row">
+                    <div class="info-border">
+                        <strong>Email</strong>
+                        :
+                        {{ utilisateur.email }}
+
+                    </div>
+                    <div class="info-name-surname">
+                        <div class="info-border">
+                            <strong>Nom</strong>
+                            :
+                            {{ utilisateur.nom }}
+                        </div>
+
+                        <div class="info-border">
+                            <strong>Prénom</strong>
+                            :
+                            {{ utilisateur.prenom }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fest-button">
+
+                <a href="{{ path('app_profil_edit', {'id' : utilisateur.getId()}) }}">
+                    <div class="button-shortcut">
+                        Modifier mon profil
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

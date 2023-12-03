@@ -3,20 +3,29 @@
 namespace App\Controller;
 
 use App\Entity\Utilisateur;
+use App\Form\ModifierProfilType;
 use App\Form\UtilisateurType;
 use App\Repository\UtilisateurRepository;
+use App\Security\EmailVerifier;
 use App\Service\MailerService;
 use App\Service\FlashMessageServiceInterface;
+use App\Service\UtilisateurManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class UtilisateurController extends AbstractController
 {
@@ -27,8 +36,8 @@ class UtilisateurController extends AbstractController
         return $this->render('index.html.twig');
     }
 
-    #[Route('/user/profile/{id}', name: 'app_user_profile')]
-    public function profile(int $id, UtilisateurRepository $utilisateurRepository): Response {
+    #[Route('/user/profil/{id}', name: 'app_user_profil')]
+    public function profil(int $id, UtilisateurRepository $utilisateurRepository): Response {
 
         $u = $utilisateurRepository->find($id);
         if (!$u)
@@ -38,14 +47,15 @@ class UtilisateurController extends AbstractController
 
         $isCurrentUser = $loggedInUser && $loggedInUser->getUserIdentifier() != $u->getUserIdentifier();
 
-        return $this->render('utilisateur/profile.html.twig', [
+        return $this->render('utilisateur/profil.html.twig', [
             'controller_name' => 'UtilisateurController',
             'utilisateur' => $u,
             'isCurrentUser' => $isCurrentUser,
+            'pp'=>base64_encode(stream_get_contents($u->getPhotoProfil()))
         ]);
     }
 
-    #[Route('/user/profile/{id}/edit', name: 'app_profile_edit')]
+    #[Route('/user/profil/{id}/edit', name: 'app_profil_edit')]
     public function edit(UtilisateurRepository $repository, #[MapEntity] Utilisateur $utilisateur, Request $request, EntityManagerInterface $em, UtilisateurManagerInterface $utilisateurManager): Response {
 
         if (!$utilisateur) {
@@ -62,7 +72,7 @@ class UtilisateurController extends AbstractController
             $utilisateurManager->processNewUtilisateur($utilisateur, $photoProfil);
             $em->flush();
             $this->addFlash('success', 'Votre profil a été modifié avec succès.');
-            return $this->redirectToRoute('app_user_profile', ['id' => $utilisateur->getId()]);
+            return $this->redirectToRoute('app_user_profil', ['id' => $utilisateur->getId()]);
         }
 
         return $this->render('utilisateur/modifierProfil.html.twig', [
@@ -73,7 +83,7 @@ class UtilisateurController extends AbstractController
     }
 
     #[Route('/signup', name: 'app_user_signup', methods: ['GET', 'POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,SluggerInterface $slugger, MailerService $mailerService, TokenGeneratorInterface $tokenGenerator, FlashMessageServiceInterface $ServiceMessageFlashInterface): Response {
+    public function signup(FlashMessageServiceInterface $ServiceMessageFlashInterface,Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, MailerService $mailerService, TokenGeneratorInterface $tokenGenerator): Response {
 
         $user = new Utilisateur();
         $form = $this->createForm(UtilisateurType::class,$user);
@@ -133,7 +143,7 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
-    #[Route('/my/avatar/{enc}', name: 'app_user_getPP', methods: ['GET'])]
+    #[Route('/my/avatar/{enc}', name: 'app_user_getPP', options: ['expose' => true], methods: ['GET'])]
     public function getPP(string $enc, UtilisateurRepository $utilisateurRepository): Response {
         $u = $utilisateurRepository->findOneBy(['encEmail' => $enc]);
         if (!$u)

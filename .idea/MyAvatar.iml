@@ -135,6 +135,8 @@
       <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/phpunit/php-timer" />
       <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/symfonycasts/verify-email-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/symfony/webpack-encore-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/willdurand/jsonp-callback-validator" />
+      <excludeFolder url="file://$MODULE_DIR$/myAvatar/vendor/friendsofsymfony/jsrouting-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
