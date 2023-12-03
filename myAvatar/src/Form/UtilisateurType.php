@@ -41,7 +41,7 @@ class UtilisateurType extends AbstractType
             ])
             ->add('email', EmailType::class)
             ->add('photoProfil', FileType::class, [
-                'required' => false,
+                'required' => true,
                 'mapped' => false,
                 'constraints' => [
                     new File(maxSize : '10M', extensions : ['jpg', 'png', 'jpeg'])

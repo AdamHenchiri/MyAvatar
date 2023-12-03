@@ -22,10 +22,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class UtilisateurController extends AbstractController
 {
@@ -36,13 +32,14 @@ class UtilisateurController extends AbstractController
         return $this->render('index.html.twig');
     }
 
-    #[Route('/user/profil/{id}', name: 'app_user_profil')]
+    #[Route('/user/profil/{id<\d+>}', name: 'app_user_profil')]
     public function profil(int $id, UtilisateurRepository $utilisateurRepository): Response {
 
         $u = $utilisateurRepository->find($id);
         if (!$u)
             throw $this->createNotFoundException("L'utilisateur n'existe pas");
-
+        if ($u!= $this->getUser())
+            throw $this->createAccessDeniedException("Vous n'avez pas accès à ce profil");
         $loggedInUser = $this->getUser();
 
         $isCurrentUser = $loggedInUser && $loggedInUser->getUserIdentifier() != $u->getUserIdentifier();
@@ -55,8 +52,8 @@ class UtilisateurController extends AbstractController
         ]);
     }
 
-    #[Route('/user/profil/{id}/edit', name: 'app_profil_edit')]
-    public function edit(UtilisateurRepository $repository, #[MapEntity] Utilisateur $utilisateur, Request $request, EntityManagerInterface $em, UtilisateurManagerInterface $utilisateurManager): Response {
+    #[Route('/user/profil/{id<\d+>}/edit', name: 'app_profil_edit')]
+    public function edit(UserPasswordHasherInterface $userPasswordHasher,UtilisateurRepository $repository, #[MapEntity] Utilisateur $utilisateur, Request $request, EntityManagerInterface $em, UtilisateurManagerInterface $utilisateurManager): Response {
 
         if (!$utilisateur) {
             throw $this->createNotFoundException('Utilisateur non trouvé.');
@@ -68,11 +65,34 @@ class UtilisateurController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $photoProfil = $form["fichierPhotoProfil"]->getData();
-            $utilisateurManager->processNewUtilisateur($utilisateur, $photoProfil);
-            $em->flush();
-            $this->addFlash('success', 'Votre profil a été modifié avec succès.');
-            return $this->redirectToRoute('app_user_profil', ['id' => $utilisateur->getId()]);
+            $pp = $form->get('photoProfil')->getData();
+            $mdp = $form->get('password')->getData();
+            $email = $form->get('email')->getData();
+            $oldMdp = $form->get('oldPassword')->getData();
+            if ($pp) {
+                $image = file_get_contents($pp);
+                $utilisateur->setPhotoProfil($image);
+            }
+            if ($mdp) {
+                $utilisateur->setPassword($mdp);
+            }
+            if ($email) {
+                $utilisateur->setEncEmail(md5($form->get('email')->getData()));
+            }
+            if (!$oldMdp) {
+                $this->addFlash('error', 'Veuillez entrer votre mot de passe actuel');
+                return $this->redirectToRoute('app_profil_edit', ['id' => $utilisateur->getId()]);
+            }else{
+                if ($userPasswordHasher->isPasswordValid($utilisateur, $oldMdp)) {
+                    $this->addFlash('success', 'Votre profil a été modifié avec succès.');
+                    $em->persist($utilisateur);
+                    $em->flush();
+                    return $this->redirectToRoute('app_user_profil', ['id' => $utilisateur->getId()]);
+                } else {
+                    $this->addFlash('error', 'Mot de passe incorrect');
+                    return $this->redirectToRoute('app_profil_edit', ['id' => $utilisateur->getId()]);
+                }
+            }
         }
 
         return $this->render('utilisateur/modifierProfil.html.twig', [
