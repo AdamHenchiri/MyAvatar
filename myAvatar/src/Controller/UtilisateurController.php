@@ -6,6 +6,7 @@ use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
 use App\Repository\UtilisateurRepository;
 use App\Security\EmailVerifier;
+use App\Service\FlashMessageServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,14 +81,22 @@ class UtilisateurController extends AbstractController
     }
 
     #[Route('/signup', name: 'app_user_signup', methods: ['GET', 'POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,SluggerInterface $slugger): Response {
+    public function signup(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,SluggerInterface $slugger, FlashMessageServiceInterface $ServiceMessageFlashInterface): Response {
 
         $user = new Utilisateur();
         $form = $this->createForm(UtilisateurType::class,$user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('app_home');
+        }
 
+        if(!($form->isSubmitted() && $form->isValid())){
+            $ServiceMessageFlashInterface->addErrorsForm($form);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->addFlash('success', 'Please confirm your email');
             $pp = $form->get('photoProfil')->getData();
 
             if ($pp) {
@@ -148,6 +157,9 @@ class UtilisateurController extends AbstractController
 
     #[Route('/signin', name: 'app_user_signin', methods: ['POST','GET'])]
     public function signin(AuthenticationUtils $authenticationUtils): Response {
+        if($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('app_home');
+        }
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('utilisateur/signin.html.twig', [
             'controller_name' => 'UtilisateurController',

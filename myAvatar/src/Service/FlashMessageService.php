@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
-class FlashMessageService {
+class FlashMessageService implements FlashMessageServiceInterface {
 
     public function __construct(private RequestStack $requestStack) {
     }
@@ -21,7 +21,7 @@ class FlashMessageService {
         return $session->getFlashBag();
     }
 
-    public function addErrorsForm(FormInterface $form) {
+    public function addErrorsForm(FormInterface $form): void {
         $errors = $form->getErrors(true);
         $flashBag = $this->getFlashbag();
         foreach ($errors as $error) {
