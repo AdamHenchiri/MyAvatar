@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -145,16 +146,16 @@ class UtilisateurController extends AbstractController
 
 
 
-    #[Route('/signin', name: 'app_user_signin', methods: ['GET', 'POST'])]
-    public function signin(): Response {
-
+    #[Route('/signin', name: 'app_user_signin', methods: ['POST','GET'])]
+    public function signin(AuthenticationUtils $authenticationUtils): Response {
+        $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('utilisateur/signin.html.twig', [
             'controller_name' => 'UtilisateurController',
         ]);
     }
 
-    #[Route('/logout', name: 'app_user_logout', methods: ['GET'])]
-    public function logout(): never {
+    #[Route('/signout', name: 'app_user_signout', methods: ['GET'])]
+    public function signout(): never {
         throw new \Exception('This should never be reached!');
     }
 
