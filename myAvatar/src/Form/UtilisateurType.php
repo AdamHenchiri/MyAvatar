@@ -25,17 +25,17 @@ class UtilisateurType extends AbstractType
         $builder
             ->add('nom', TextType::class, [
                 'attr' => [
-                    'minlength' => 4,
+                    'minlength' => 3,
                     'maxlength' => 20,
-                    'minMessage' => 'Minimum 4 caractères',
+                    'minMessage' => 'Minimum 3 caractères',
                     'maxMessage' => 'Maximum 20 caractères',
                 ]
             ])
             ->add('prenom', TextType::class, [
                 'attr' => [
-                    'minlength' => 4,
+                    'minlength' => 3,
                     'maxlength' => 20,
-                    'minMessage' => 'Minimum 4 caractères',
+                    'minMessage' => 'Minimum 3 caractères',
                     'maxMessage' => 'Maximum 20 caractères',
                 ]
             ])
