@@ -28,6 +28,14 @@
                     <img class="w-8 h-8 rounded-full" src="https://w7.pngwing.com/pngs/522/396/png-transparent-computer-icons-profile-miscellaneous-logo-profile.png"/>
                     {% endif %}
                 </button>
+                    </form>
+                {% else %}
+                    <form action="{{ path('app_user_signin') }}" method="get">
+                <button type="submit" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 " id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                    <img  class="w-8 h-8 rounded-full" src="https://w7.pngwing.com/pngs/522/396/png-transparent-computer-icons-profile-miscellaneous-logo-profile.png">
+                </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </nav>

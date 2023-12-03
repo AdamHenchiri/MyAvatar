@@ -4,21 +4,46 @@
 {% block body %}
 
     <div class="form-wrapper">
-        <h1>Modifier votre profil</h1>
 
-        {{ form_start(form, {'attr': {'class': 'utilisateur-form'}}) }}
+        {{ form_start(form, {'attr': {'class': 'max-w-sm mx-auto mt-10 mb-10'}}) }}
+        <h1 class="text-center block mb-4 text-xl font-medium text-gray-900 ">Modifier votre profil</h1>
+        <div class="mb-3 max-w-lg mx-auto">
+            <label class="block mb-2 text-sm font-medium text-gray-900 " for="user_avatar">{{ form_label(form.photoProfil, "Photo de profil") }}</label>
+            {{ form_widget(form.photoProfil, {'attr' : {'class' : 'cursor-pointer relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none '}}) }}
+            <div class="mt-1 text-sm text-gray-500 " id="user_avatar_help">Cette photo de profil sera utilisée par d'autres</div>
+        </div>
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.nom, "Nom") }}</label>
+            {{ form_widget(form.nom, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.prenom, "Prénom") }}</label>
+            {{ form_widget(form.prenom, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.login, "Login") }}</label>
+            {{ form_widget(form.login, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.email, "Email") }}</label>
+            {{ form_widget(form.email, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.oldPassword, "Ancien mot de passe") }}</label>
+            {{ form_widget(form.oldPassword, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '}}) }}
+        </div>
 
-        {{ form_row(form.nom, {'label': 'Nom', 'attr': {'class': 'utilisateur-form__input'}}) }}
-        {{ form_row(form.prenom, {'label': 'Prénom', 'attr': {'class': 'utilisateur-form__input'}}) }}
-        {{ form_row(form.email, {'label': 'Email', 'attr': {'class': 'utilisateur-form__input'}}) }}
-        {{ form_row(form.adresse, {'label': 'Adresse', 'attr': {'class': 'utilisateur-form__input'}}) }}
-        {{ form_row(form.description, {'label': 'Description', 'attr': {'class': 'utilisateur-form__input'}}) }}
-        {{ form_row(form.fichierPhotoProfil, {'label': 'Photo de profil', 'attr': {'class': 'utilisateur-form__input'}}) }}
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.password.first, "Mot de passe") }}</label>
+            {{ form_widget(form.password.first, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '}}) }}
+        </div>
 
-
-        {{ form_widget(form.demanderModificationProfil, {'label': 'Modifier', 'attr': {'class': 'utilisateur-form__checkbox'}}) }}
-
-        {{ form_end(form) }}
+        <div class="mb-3">
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">{{ form_label(form.password.second, "Confirmer le mot de passe") }}</label>
+            {{ form_widget(form.password.second, {'attr' : {'class' : 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+        </div>
     </div>
-
+    {{ form_widget(form.edit, {'label' : "Modifier", 'attr' : {'class' : 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center '}}) }}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
 {% endblock %}
