@@ -5,50 +5,39 @@
 {% endblock %}
 
 {% block body %}
-
-    <div class="profil-box">
-          <h1>  Hello {{ utilisateur.nom }} voici votre profil
-          </h1>
-        <div class="info-box-wrapper">
-            <div class="info-box">
-            {% if utilisateur.photoProfil == true %}
-                <img src="data:image/jpeg;base64,{{ pp }}" alt="image de profil">
-            {% else %}
-                    <img src="{{ asset("uploads/user/anonyme.png") }}" alt="image de profil"/>
-            {% endif %}
-                </div>
-                <div class="info-row">
-                    <div class="info-border">
-                        <strong>Email</strong>
-                        :
-                        {{ utilisateur.email }}
-
-                    </div>
-                    <div class="info-name-surname">
-                        <div class="info-border">
-                            <strong>Nom</strong>
-                            :
-                            {{ utilisateur.nom }}
-                        </div>
-
-                        <div class="info-border">
-                            <strong>Prénom</strong>
-                            :
-                            {{ utilisateur.prenom }}
+    <div class=' container-profil flex items-center justify-center'>
+        <div class="relative w-full group max-w-md min-w-0 mx-auto mt-6 mb-6 break-words bg-white border shadow-2xl dark:bg-gray-800 dark:border-gray-700 md:max-w-sm rounded-xl">
+            <div class="pb-6">
+                <div class="flex flex-wrap justify-center">
+                    <div class="flex justify-center w-full">
+                        <div class="flex justify-center">
+                                <img src="data:image/jpeg;base64,{{ pp }}" alt="image de profil" class="rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110">
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="mt-2 mt-20 text-center">
+                    <h3 class="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">{{ utilisateur.prenom }} {{ utilisateur.nom }}</h3>
+                    <div class="flex flex-row justify-center w-full mx-auto space-x-2 text-center">
 
-            <div class="fest-button">
-
-                <a href="{{ path('app_profil_edit', {'id' : utilisateur.getId()}) }}">
-                    <div class="button-shortcut">
-                        Modifier mon profil
+                        <div class="text-xs font-bold tracking-wide text-gray-600 dark:text-gray-300 font-mono text-xl">{{ utilisateur.email }}</div>
                     </div>
-                </a>
+                </div>
+                <div class="pt-6 mx-6 text-center">
+                    <a href="{{ path('app_profil_edit', {'id': utilisateur.id}) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Modifier votre profil</a>
+
+                </div>
+                <div class="relative h-6 overflow-hidden translate-y-6 rounded-b-xl">
+                    <div class="absolute flex -space-x-12 rounded-b-2xl">
+                        <div class="w-36 h-8 transition-colors duration-200 delay-75 transform skew-x-[35deg] bg-blue-400/90 group-hover:bg-blue-600/90 z-10"></div>
+                        <div class="w-28 h-8 transition-colors duration-200 delay-100 transform skew-x-[35deg] bg-blue-300/90 group-hover:bg-blue-500/90 z-20"></div>
+                        <div class="w-28 h-8 transition-colors duration-200 delay-150 transform skew-x-[35deg] bg-blue-200/90 group-hover:bg-blue-400/90 z-30"></div>
+                        <div class="w-28 h-8 transition-colors duration-200 delay-200 transform skew-x-[35deg] bg-blue-100/90 group-hover:bg-blue-300/90 z-40"></div>
+                        <div class="w-28 h-8 transition-colors duration-200 delay-300 transform skew-x-[35deg] bg-blue-50/90 group-hover:bg-blue-200/90 z-50"></div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 
 {% endblock %}
