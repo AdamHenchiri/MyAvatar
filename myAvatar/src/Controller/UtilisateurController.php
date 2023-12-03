@@ -7,6 +7,7 @@ use App\Form\UtilisateurType;
 use App\Repository\UtilisateurRepository;
 use App\Security\EmailVerifier;
 use App\Service\MailerService;
+use App\Service\FlashMessageServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -85,8 +86,16 @@ class UtilisateurController extends AbstractController
         $form = $this->createForm(UtilisateurType::class,$user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('app_home');
+        }
 
+        if(!($form->isSubmitted() && $form->isValid())){
+            $ServiceMessageFlashInterface->addErrorsForm($form);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->addFlash('success', 'Please confirm your email');
             $pp = $form->get('photoProfil')->getData();
 
             if ($pp) {
@@ -151,6 +160,9 @@ class UtilisateurController extends AbstractController
 
     #[Route('/signin', name: 'app_user_signin', methods: ['POST','GET'])]
     public function signin(AuthenticationUtils $authenticationUtils): Response {
+        if($this->isGranted('ROLE_USER')) {
+            return $this->redirectToRoute('app_home');
+        }
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('utilisateur/signin.html.twig', [
             'controller_name' => 'UtilisateurController',
