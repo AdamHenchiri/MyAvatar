@@ -9,6 +9,7 @@ use App\Repository\UtilisateurRepository;
 use App\Security\EmailVerifier;
 use App\Service\MailerService;
 use App\Service\FlashMessageServiceInterface;
+use App\Service\UserImageService;
 use App\Service\UtilisateurManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
@@ -27,9 +28,10 @@ class UtilisateurController extends AbstractController
 {
 
     #[Route('/', name: 'app_home', methods: ['GET'])]
-    public function index(): Response
+    public function index(UserImageService $imageService): Response
     {
-        return $this->render('index.html.twig');
+        return $this->render('index.html.twig',[            'userImageService' => $imageService
+        ]);
     }
 
     #[Route('/user/profil/{id<\d+>}', name: 'app_user_profil')]
@@ -182,13 +184,14 @@ class UtilisateurController extends AbstractController
 
 
     #[Route('/signin', name: 'app_user_signin', methods: ['POST','GET'])]
-    public function signin(AuthenticationUtils $authenticationUtils): Response {
+    public function signin(AuthenticationUtils $authenticationUtils, UserImageService $imageService): Response {
         if($this->isGranted('ROLE_USER')) {
             return $this->redirectToRoute('app_home');
         }
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('utilisateur/signin.html.twig', [
             'controller_name' => 'UtilisateurController',
+            'userImageService' => $imageService
         ]);
     }
 
