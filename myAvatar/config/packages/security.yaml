@@ -16,7 +16,7 @@ security:
         main:
             lazy: true
             provider: in_database
-
+            user_checker: App\Security\UtilisateurConfirmation
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

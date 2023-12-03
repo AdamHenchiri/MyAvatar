@@ -1,0 +1,4 @@
+<h1>Confirmation de votre compte utilisateur</h1>
+<p>Bienvenue à toi {{ utilisateur.login }} !</p>
+<p>Veuillez confirmer votre compte en vous dirigeant vers le lien ci-dessous :</p>
+<a href="{{ absolute_url(path('account_verify', {token: token, id: utilisateur.id})) }}">Vérifier mon compte</a>
