@@ -6,8 +6,10 @@ use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
 use App\Repository\UtilisateurRepository;
 use App\Security\EmailVerifier;
+use App\Service\MailerService;
 use App\Service\FlashMessageServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -16,18 +18,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class UtilisateurController extends AbstractController
 {
-    private EmailVerifier $emailVerifier;
-
-    public function __construct(EmailVerifier $emailVerifier) {
-        $this->emailVerifier = $emailVerifier;
-    }
 
     #[Route('/', name: 'app_home', methods: ['GET'])]
     public function index(): Response
@@ -81,7 +80,7 @@ class UtilisateurController extends AbstractController
     }
 
     #[Route('/signup', name: 'app_user_signup', methods: ['GET', 'POST'])]
-    public function signup(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,SluggerInterface $slugger, FlashMessageServiceInterface $ServiceMessageFlashInterface): Response {
+    public function signup(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,SluggerInterface $slugger, MailerService $mailerService, TokenGeneratorInterface $tokenGenerator): Response {
 
         $user = new Utilisateur();
         $form = $this->createForm(UtilisateurType::class,$user);
@@ -116,18 +115,22 @@ class UtilisateurController extends AbstractController
             $user->setIsVerified(false);
 
             $user->setEncEmail(md5($form->get('email')->getData()));
-
+            $tokenRegistration = $tokenGenerator->generateToken();
+            $user->setTokenRegistration($tokenRegistration);
             $entityManager->persist($user);
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('no-reply@MyAvatar.com', 'No Reply'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('utilisateur/confirmation_email.html.twig')
+            $mailerService->send(
+                $user->getEmail(),
+                'Confirmation d\'adresse mail',
+                'confirmation.html.twig',
+                [
+                    'utilisateur' => $user,
+                    'token' => $tokenRegistration,
+                ]
             );
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -171,23 +174,20 @@ class UtilisateurController extends AbstractController
         throw new \Exception('This should never be reached!');
     }
 
-    #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
+    #[Route('/verify/{token}/{id<\d+>}', name: 'account_verify', methods: ['GET'])]
+    public function verify(string $token, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        // validate email confirmation link, sets User::isVerified=true and persists
-        try {
-            $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
-
-            return $this->redirectToRoute('app_user_signup');
+        if($utilisateur->getTokenRegistration() !== $token
+            || $utilisateur->getTokenRegistration() === null
+        ){
+            throw new AccessDeniedException();
         }
 
-        $this->addFlash('success', 'Your email address has been verified.');
-
-        return $this->redirectToRoute('app_home');
+        $utilisateur->setIsVerified(true);
+        $utilisateur->setTokenRegistration(null);
+        $entityManager->flush();
+        $this->addFlash('success', 'Votre compte a bien été vérifié');
+        return $this->redirectToRoute('app_user_signin');
     }
 
 }
