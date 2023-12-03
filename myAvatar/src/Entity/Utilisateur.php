@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -24,8 +25,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $photoProfil = null;
+    #[ORM\Column(type: Types::BLOB)]
+    private mixed $photoProfil = null;
 
     #[ORM\Column(length: 255)]
     private ?string $login = null;
@@ -35,6 +36,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?int $is_verified = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $encEmail = null;
 
     public function getId(): ?int
     {
@@ -77,7 +81,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhotoProfil(): ?string
+    public function getPhotoProfil(): mixed
     {
         return $this->photoProfil;
     }
@@ -141,5 +145,29 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
+    }
+
+    public function getEncEmail(): ?string
+    {
+        return $this->encEmail;
+    }
+
+    public function setEncEmail(string $encEmail): static
+    {
+        $this->encEmail = $encEmail;
+
+        return $this;
+    }
+
+    public function getPhotoProf()
+    {
+        return $this->photoProf;
+    }
+
+    public function setPhotoProf($photoProf): static
+    {
+        $this->photoProf = $photoProf;
+
+        return $this;
     }
 }

@@ -5,6 +5,8 @@
 {% block body %}
     <div>
     <h1>Sign Up</h1>
+
+    {{ form_start(form) }}
     {{ form_label(form.nom, "Nom :") }}
     {{ form_widget(form.nom) }}
 
@@ -27,5 +29,7 @@
     {{ form_widget(form.password.second) }}
 
     {{ form_widget(form.submit) }}
+        {{ form_rest(form) }}
+    {{ form_end(form) }}
     </div>
 {% endblock %}
