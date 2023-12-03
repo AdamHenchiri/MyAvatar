@@ -5,10 +5,13 @@ namespace App\Entity;
 use App\Repository\UtilisateurRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[UniqueEntity('email')]
+#[UniqueEntity('login')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -35,7 +38,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    private ?int $is_verified = null;
+    private ?bool $is_verified = null;
 
     #[ORM\Column(length: 255)]
     private ?string $encEmail = null;
@@ -122,22 +125,18 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getIsVerified(): ?int
+    public function isIsVerified(): ?bool
     {
         return $this->is_verified;
     }
 
-    public function setIsVerified(int $is_verified): static
+    public function setIsVerified(bool $is_verified): static
     {
         $this->is_verified = $is_verified;
 
         return $this;
     }
 
-    public function isIsVerified(): ?bool
-    {
-        return $this->is_verified;
-    }
 
     public function getRoles(): array
     {

@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+{% block title %}modifier votre profil{% endblock %}
+
+{% block body %}
+
+    <div class="form-wrapper">
+        <h1>Modifier votre profil</h1>
+
+        {{ form_start(form, {'attr': {'class': 'utilisateur-form'}}) }}
+
+        {{ form_row(form.nom, {'label': 'Nom', 'attr': {'class': 'utilisateur-form__input'}}) }}
+        {{ form_row(form.prenom, {'label': 'Prénom', 'attr': {'class': 'utilisateur-form__input'}}) }}
+        {{ form_row(form.email, {'label': 'Email', 'attr': {'class': 'utilisateur-form__input'}}) }}
+        {{ form_row(form.adresse, {'label': 'Adresse', 'attr': {'class': 'utilisateur-form__input'}}) }}
+        {{ form_row(form.description, {'label': 'Description', 'attr': {'class': 'utilisateur-form__input'}}) }}
+        {{ form_row(form.fichierPhotoProfil, {'label': 'Photo de profil', 'attr': {'class': 'utilisateur-form__input'}}) }}
+
+
+        {{ form_widget(form.demanderModificationProfil, {'label': 'Modifier', 'attr': {'class': 'utilisateur-form__checkbox'}}) }}
+
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

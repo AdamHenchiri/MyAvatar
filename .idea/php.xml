@@ -131,6 +131,8 @@
       <path value="$PROJECT_DIR$/myAvatar/vendor/phpunit/php-timer" />
       <path value="$PROJECT_DIR$/myAvatar/vendor/symfonycasts/verify-email-bundle" />
       <path value="$PROJECT_DIR$/myAvatar/vendor/symfony/webpack-encore-bundle" />
+      <path value="$PROJECT_DIR$/myAvatar/vendor/willdurand/jsonp-callback-validator" />
+      <path value="$PROJECT_DIR$/myAvatar/vendor/friendsofsymfony/jsrouting-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
