@@ -35,7 +35,7 @@ class UtilisateurController extends AbstractController
     }
 
     #[Route('/user/profil/{id<\d+>}', name: 'app_user_profil')]
-    public function profil(int $id, UtilisateurRepository $utilisateurRepository): Response {
+    public function profil(UserImageService $imageService, int $id, UtilisateurRepository $utilisateurRepository): Response {
 
         $u = $utilisateurRepository->find($id);
         if (!$u)
@@ -46,16 +46,19 @@ class UtilisateurController extends AbstractController
 
         $isCurrentUser = $loggedInUser && $loggedInUser->getUserIdentifier() != $u->getUserIdentifier();
 
+        //dd($imageService->getUserImage($u->getId()));
+
         return $this->render('utilisateur/profil.html.twig', [
             'controller_name' => 'UtilisateurController',
             'utilisateur' => $u,
             'isCurrentUser' => $isCurrentUser,
-            'pp'=>base64_encode(stream_get_contents($u->getPhotoProfil()))
+            'userImageService' => $imageService,
+            'pp' => $imageService->getUserImage($u->getId())
         ]);
     }
 
     #[Route('/user/profil/{id<\d+>}/edit', name: 'app_profil_edit')]
-    public function edit(UserPasswordHasherInterface $userPasswordHasher,UtilisateurRepository $repository, #[MapEntity] Utilisateur $utilisateur, Request $request, EntityManagerInterface $em, UtilisateurManagerInterface $utilisateurManager): Response {
+    public function edit( UserImageService $imageService,UserPasswordHasherInterface $userPasswordHasher,UtilisateurRepository $repository, #[MapEntity] Utilisateur $utilisateur, Request $request, EntityManagerInterface $em, UtilisateurManagerInterface $utilisateurManager): Response {
 
         if (!$utilisateur) {
             throw $this->createNotFoundException('Utilisateur non trouvé.');
@@ -76,23 +79,26 @@ class UtilisateurController extends AbstractController
                 $utilisateur->setPhotoProfil($image);
             }
             if ($mdp) {
-                $utilisateur->setPassword($mdp);
+                $userPasswordHasher->hashPassword(
+                    $utilisateur,
+                    $mdp
+                );
             }
             if ($email) {
                 $utilisateur->setEncEmail(md5($form->get('email')->getData()));
             }
             if (!$oldMdp) {
                 $this->addFlash('error', 'Veuillez entrer votre mot de passe actuel');
-                return $this->redirectToRoute('app_profil_edit', ['id' => $utilisateur->getId()]);
+                return $this->redirectToRoute('app_profil_edit', ['id' => $utilisateur->getId(), 'userImageService' => $imageService]);
             }else{
                 if ($userPasswordHasher->isPasswordValid($utilisateur, $oldMdp)) {
                     $this->addFlash('success', 'Votre profil a été modifié avec succès.');
                     $em->persist($utilisateur);
                     $em->flush();
-                    return $this->redirectToRoute('app_user_profil', ['id' => $utilisateur->getId()]);
+                    return $this->redirectToRoute('app_user_profil', ['id' => $utilisateur->getId(),'userImageService' => $imageService]);
                 } else {
                     $this->addFlash('error', 'Mot de passe incorrect');
-                    return $this->redirectToRoute('app_profil_edit', ['id' => $utilisateur->getId()]);
+                    return $this->redirectToRoute('app_profil_edit', ['id' => $utilisateur->getId(), 'userImageService' => $imageService]);
                 }
             }
         }
@@ -101,11 +107,12 @@ class UtilisateurController extends AbstractController
             'controller_name' => 'UtilisateurController',
             'form' => $form->createView(),
             'utilisateur' => $utilisateur,
+            'userImageService' => $imageService
         ]);
     }
 
     #[Route('/signup', name: 'app_user_signup', methods: ['GET', 'POST'])]
-    public function signup(FlashMessageServiceInterface $ServiceMessageFlashInterface,Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, MailerService $mailerService, TokenGeneratorInterface $tokenGenerator): Response {
+    public function signup(UserImageService $imageService, FlashMessageServiceInterface $ServiceMessageFlashInterface,Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, MailerService $mailerService, TokenGeneratorInterface $tokenGenerator): Response {
 
         $user = new Utilisateur();
         $form = $this->createForm(UtilisateurType::class,$user);
@@ -161,7 +168,8 @@ class UtilisateurController extends AbstractController
 
         return $this->render('utilisateur/signup.html.twig', [
             'controller_name' => 'UtilisateurController' ,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'userImageService' => $imageService
         ]);
     }
 

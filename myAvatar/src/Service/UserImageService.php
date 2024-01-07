@@ -20,8 +20,8 @@ $user = $userRepository->find($userId);
 
 if ($user) {
 return base64_encode(stream_get_contents($user->getPhotoProfil()));
-}
-
+}else{
 return null;
+}
 }
 }

@@ -13,6 +13,7 @@
         <label class="block mb-2 text-sm font-medium text-gray-900 ">Mot de passe</label>
         <input class="input-all shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " id="password" type="password" name="_password"/>
     </div>
+    <a href="{{ path("app_forgot_password_request") }}" class="text-blue-700 underline" >Mot de passe oublié</a>
     <div class="mb-3">
         <label class="block mb-2 text-xs font-medium text-gray-900 ">Vous n'avez pas encore de compte ? <a class="text-blue-700 underline" href="{{ path('app_user_signup') }}">Inscrivez-vous</a></label>
     </div>

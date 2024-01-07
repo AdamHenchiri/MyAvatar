@@ -21,20 +21,22 @@
                 <span class="self-center text-2xl font-semibold whitespace-nowrap ">MyAvatar</span>
             </a>
             <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 " id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                   {% if is_granted('ROLE_USER') %}
-                    <img class="w-8 h-8 rounded-full" src="data:image/jpeg;base64,{{ userImageService.getUserImage(app.user.id) }}"/>
-                    {% else %}
-                    <img class="w-8 h-8 rounded-full" src="https://w7.pngwing.com/pngs/522/396/png-transparent-computer-icons-profile-miscellaneous-logo-profile.png"/>
-                    {% endif %}
+                {% if is_granted('ROLE_USER') %}
+                <form action="{{ path('app_user_profil', {'id' : app.user.id}) }}" method="get">
+                    <button type="submit" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 " id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                        {% if pp is defined %}
+                            <img class="w-8 h-8 rounded-full" src="data:image/jpeg;base64,{{ pp }}"/>
+                        {% else %}
+                            <img class="w-8 h-8 rounded-full" src="data:image/jpeg;base64,{{ userImageService.getUserImage(app.user.id) }}"/>
+                        {% endif %}
                 </button>
-                    </form>
+                </form>
                 {% else %}
-                    <form action="{{ path('app_user_signin') }}" method="get">
-                <button type="submit" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 " id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                    <img  class="w-8 h-8 rounded-full" src="https://w7.pngwing.com/pngs/522/396/png-transparent-computer-icons-profile-miscellaneous-logo-profile.png">
-                </button>
-                    </form>
+                <form action="{{ path('app_user_signin') }}" method="get">
+                    <button type="submit" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 " id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                        <img class="w-8 h-8 rounded-full" src="https://w7.pngwing.com/pngs/522/396/png-transparent-computer-icons-profile-miscellaneous-logo-profile.png"/>
+                    </button>
+                </form>
                 {% endif %}
             </div>
         </div>
