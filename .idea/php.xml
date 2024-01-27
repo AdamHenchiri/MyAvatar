@@ -133,6 +133,7 @@
       <path value="$PROJECT_DIR$/myAvatar/vendor/symfony/webpack-encore-bundle" />
       <path value="$PROJECT_DIR$/myAvatar/vendor/willdurand/jsonp-callback-validator" />
       <path value="$PROJECT_DIR$/myAvatar/vendor/friendsofsymfony/jsrouting-bundle" />
+      <path value="$PROJECT_DIR$/myAvatar/vendor/symfonycasts/reset-password-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
