@@ -12,8 +12,10 @@ use App\Service\FlashMessageServiceInterface;
 use App\Service\UserImageService;
 use App\Service\UtilisateurManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpParser\Node\Scalar\String_;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -174,7 +176,8 @@ class UtilisateurController extends AbstractController
     }
 
     #[Route('/my/avatar/{enc}', name: 'app_user_getPP', options: ['expose' => true], methods: ['GET'])]
-    public function getPP(string $enc, UtilisateurRepository $utilisateurRepository): Response {
+    public function getPP(string $enc, UtilisateurRepository $utilisateurRepository): Response
+    {
         $u = $utilisateurRepository->findOneBy(['encEmail' => $enc]);
         if (!$u)
             throw $this->createNotFoundException("L'utilisateur n'existe pas");
@@ -184,9 +187,10 @@ class UtilisateurController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', $mimeType);
         $response->setContent(base64_encode($image));
-        return $this->render('utilisateur/imagepp.html.twig', [
-            'pp' => $response->getContent(),
-        ]);
+//        return $this->render('utilisateur/imagepp.html.twig', [
+//            'pp' => $response->getContent(),
+//        ]);
+        return new Response($response->getContent());
     }
 
 
