@@ -3,5 +3,52 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-    <h1>Hello Welcome to myAvatar!</h1>
+
+
+    <div class=' container-profil flex items-center justify-center'>
+        <div class="relative w-full group max-w-md min-w-0 mx-auto mt-6 mb-6 break-words bg-white border shadow-2xl dark:bg-gray-800 dark:border-gray-700  rounded-xl">
+
+
+
+            <div class="pb-6">
+                <div class="mt-2 text-center">
+                    <h3 class="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">Bonjour et bienvenue sur MyAvatar</h3>
+                    <div class="flex flex-row justify-center w-full mx-auto space-x-2 text-center">
+
+                        <div class="text-xs font-bold tracking-wide text-gray-600 dark:text-gray-300 font-mono text-xl">
+                            Le projet MyAvatar est une application web classique développée en côté serveur avec Symfony.
+                            Votre adresse e-mail devient votre passeport pour le monde numérique, vous donnant un contrôle total sur vos données personnelles.
+                            Inspirée du service Gravatar, cette application permet aux utilisateurs de s'enregistrer en associant leur adresse e-mail à une photo de profil.
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-6 mx-6 text-center">
+                    {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('app_user_profil', {'id' : app.user.id}) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Mon profil</a>
+                    {% else %}
+                    <a href="{{ path('app_user_signin')}}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Connectez-vous</a>
+                        <a href="{{ path('app_user_signup')}}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Créez votre profil</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=' container-profil flex items-center justify-center'>
+        <div class="relative w-full group max-w-md min-w-0 mx-auto mt-6 mb-6 break-words bg-white border shadow-2xl dark:bg-gray-800 dark:border-gray-700  rounded-xl">
+        <div class="pb-6">
+            <div class="mt-2  text-center">
+                <h3 class="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">Les développeurs aiment MyAvatar</h3>
+                <div class="flex flex-row justify-center w-full mx-auto space-x-2 text-center">
+
+                    <div class="text-xs font-bold tracking-wide text-gray-600 dark:text-gray-300 font-mono text-xl">
+                        MyAvatar peut être intégré dans votre application en quelques minutes.
+                        Il suffit de hacher l'adresse email de l'utilisateur avec md5 et de la passer au service avec ce lien "/my/avatar/{enc}".
+                        Le service retournera l'encodage base64 de l'avatar de l'utilisateur.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
 {% endblock %}

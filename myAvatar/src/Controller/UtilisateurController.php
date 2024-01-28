@@ -212,6 +212,18 @@ class UtilisateurController extends AbstractController
         throw new \Exception('This should never be reached!');
     }
 
+    #[Route('/user/profil/{id<\d+>}/delete', name: 'app_user_delete', methods: ['GET'])]
+    public function delete(Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
+    {
+        if($utilisateur !== $this->getUser()){
+            throw new AccessDeniedException();
+        }
+        $entityManager->remove($utilisateur);
+        $entityManager->flush();
+        $this->addFlash('success', 'Votre compte a bien été supprimé');
+        return $this->redirectToRoute('app_user_signup');
+    }
+
     #[Route('/verify/{token}/{id<\d+>}', name: 'account_verify', methods: ['GET'])]
     public function verify(string $token, Utilisateur $utilisateur, EntityManagerInterface $entityManager): Response
     {

@@ -4,6 +4,18 @@
     {{utilisateur.nom}} {{ utilisateur.prenom}}
 {% endblock %}
 
+{% block javascripts %}
+    <script>
+        const buttonSupprimer = document.getElementById('button-supprimer');
+        buttonSupprimer.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (confirm('Voulez-vous vraiment supprimer votre compte ?')) {
+                window.location.href = this.href;
+            }
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class=' container-profil flex items-center justify-center'>
         <div class="relative w-full group max-w-md min-w-0 mx-auto mt-6 mb-6 break-words bg-white border shadow-2xl dark:bg-gray-800 dark:border-gray-700 md:max-w-sm rounded-xl">
@@ -24,9 +36,13 @@
                 </div>
                 <div class="pt-6 mx-6 text-center">
                     <a href="{{ path('app_profil_edit', {'id': utilisateur.id}) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Modifier votre profil</a>
-
+                </div >
+                <div class="pt-6 mx-6 text-center">
+                    <a href="{{ path("app_user_signout") }}" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Déconnexion</a>
                 </div>
-                <a href="{{ path("app_user_signout") }}" class="text-blue-700 underline flex justify-center mt-5" >Déconnexion</a>
+                <div class="pt-6 mx-6 text-center" id="button-supprimer">
+                    <a href="{{ path("app_user_delete", {'id': utilisateur.id}) }}" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Supprimer Votre compte</a>
+                </div>
                 <div class="relative h-6 overflow-hidden translate-y-6 rounded-b-xl">
                     <div class="absolute flex -space-x-12 rounded-b-2xl">
                         <div class="w-36 h-8 transition-colors duration-200 delay-75 transform skew-x-[35deg] bg-blue-400/90 group-hover:bg-blue-600/90 z-10"></div>
@@ -42,3 +58,5 @@
     </div>
 
 {% endblock %}
+
+
